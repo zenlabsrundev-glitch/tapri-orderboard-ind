@@ -153,7 +153,7 @@ export const OrderPanel = ({ onPlace, onPopper, onCelebrate }: OrderPanelProps) 
                   <div key={i} className={`rounded-[2px] ${on ? 'bg-chai-deep' : 'bg-transparent'}`} />
                 ))}
               </div>
-              <p className="font-handwritten text-xl text-chai">Scan to skip the queue!</p>
+              <p className="font-handwritten text-xl text-chai">Scan to skip the queue</p>
             </div>
           </DialogContent>
         </Dialog>
