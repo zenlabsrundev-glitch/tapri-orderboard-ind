@@ -80,7 +80,9 @@ const startServer = async () => {
   }
 };
 
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+// In serverless environments (e.g. Vercel), this file is imported by a function
+// and must NOT call listen(). Start only when run directly in local/dev server mode.
+if (require.main === module) {
   startServer();
 }
 
