@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 const API_BASE = process.env.REACT_APP_API_URL
   ? `${process.env.REACT_APP_API_URL}/orders`
-  : 'http://localhost:8080/api/orders';
+  : '/api/orders';
 
 export const useOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);

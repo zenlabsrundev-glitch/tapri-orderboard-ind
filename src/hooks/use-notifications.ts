@@ -13,7 +13,7 @@ export interface Notification {
   createdAt: number;
 }
 
-const API_BASE = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/notifications` : 'http://localhost:8080/api/notifications';
+const API_BASE = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/notifications` : '/api/notifications';
 
 export const useNotifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
