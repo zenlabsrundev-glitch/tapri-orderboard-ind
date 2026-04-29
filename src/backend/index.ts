@@ -15,12 +15,13 @@ dotenv.config();
 const app = express();
 export { app };
 const httpServer = createServer(app);
-const io = new Server(httpServer as any, {
+const ioOpts: any = {
   cors: {
     origin: '*',
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   }
-} as any);
+};
+const io: any = new Server(httpServer as any, ioOpts);
 
 const port = process.env.BACKEND_PORT || process.env.PORT || 8080;
 
@@ -59,7 +60,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Socket connection
-io.on('connection', (socket) => {
+io.on('connection', (socket: { id: any; on: (arg0: string, arg1: () => void) => void; }) => {
   console.log('[socket]: Client connected:', socket.id);
   socket.on('disconnect', () => {
     console.log('[socket]: Client disconnected');
