@@ -48,7 +48,7 @@ export function createMenuRouter(menuRepo: MenuRepository, suggestionRepo: Sugge
       !isValidCategoryId(categoryId) ||
       !isValidTags(tags)
     ) {
-      return res.status(400).json({ error: 'Invalid menu item payload' });
+      return res.status(400).json({ error: 'Invalid menu item the payload' });
     }
 
     const createdItem = await menuRepo.createMenuCardItem({
