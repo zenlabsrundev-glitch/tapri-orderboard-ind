@@ -20,7 +20,7 @@ const io = new Server(httpServer as any, {
     origin: '*',
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   }
-});
+} as any);
 
 const port = process.env.BACKEND_PORT || process.env.PORT || 8080;
 
