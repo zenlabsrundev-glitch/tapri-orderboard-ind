@@ -1,10 +1,20 @@
-import { Request, Response } from 'express';
 import { NotificationService } from '../services/NotificationService';
+
+type ControllerRequest = {
+  params: Record<string, string | undefined>;
+  body?: any;
+  [key: string]: any;
+};
+
+type ControllerResponse = {
+  json: (body: any) => any;
+  status: (code: number) => ControllerResponse;
+};
 
 export class NotificationController {
   constructor(private notificationService: NotificationService) {}
 
-  getNotifications = async (req: any, res: any) => {
+  getNotifications = async (req: ControllerRequest, res: ControllerResponse) => {
     try {
       const notifications = await this.notificationService.listNotifications();
       res.json(notifications);
@@ -13,9 +23,12 @@ export class NotificationController {
     }
   };
 
-  markAsRead = async (req: any, res: any) => {
+  markAsRead = async (req: ControllerRequest, res: ControllerResponse) => {
     try {
       const id = req.params.id?.trim();
+      if (!id) {
+        return res.status(400).json({ error: 'Notification id is required' });
+      }
       console.log(`[notifications]: Attempting to mark as read. ID: "${id}"`);
       const success = await this.notificationService.markRead(id);
       if (success) {
@@ -29,7 +42,7 @@ export class NotificationController {
     }
   };
 
-  markAllAsRead = async (req: any, res: any) => {
+  markAllAsRead = async (req: ControllerRequest, res: ControllerResponse) => {
     try {
       await this.notificationService.markAllRead();
       res.status(200).json({ success: true });
@@ -38,9 +51,12 @@ export class NotificationController {
     }
   };
 
-  deleteNotification = async (req: any, res: any) => {
+  deleteNotification = async (req: ControllerRequest, res: ControllerResponse) => {
     try {
       const id = req.params.id?.trim();
+      if (!id) {
+        return res.status(400).json({ error: 'Notification id is required' });
+      }
       const success = await this.notificationService.deleteNotification(id);
       if (success) {
         res.status(200).json({ success: true });
@@ -52,7 +68,7 @@ export class NotificationController {
     }
   };
 
-  deleteAll = async (req: any, res: any) => {
+  deleteAll = async (req: ControllerRequest, res: ControllerResponse) => {
     try {
       await this.notificationService.clearAllNotifications();
       res.status(200).json({ success: true });

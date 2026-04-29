@@ -1,10 +1,25 @@
-import { Request, Response } from 'express';
 import { OrderService } from '../services/OrderService';
+
+type ControllerRequest = {
+  params: Record<string, string | undefined>;
+  body?: any;
+  io?: { emit: (event: string, payload: any) => void };
+  notificationService?: {
+    createNotification: (type: string, title: string, message: string, orderId?: string) => Promise<any>;
+  };
+  [key: string]: any;
+};
+
+type ControllerResponse = {
+  json: (body: any) => any;
+  status: (code: number) => ControllerResponse;
+  send: (body?: any) => any;
+};
 
 export class OrderController {
   constructor(private orderService: OrderService) {}
 
-  getAllOrders = async (req: any, res: any) => {
+  getAllOrders = async (req: ControllerRequest, res: ControllerResponse) => {
     try {
       const orders = await this.orderService.listOrders();
       res.json(orders);
@@ -13,7 +28,7 @@ export class OrderController {
     }
   };
 
-  createOrder = async (req: any, res: any) => {
+  createOrder = async (req: ControllerRequest, res: ControllerResponse) => {
     try {
       const order = await this.orderService.placeOrder(req.body);
       
@@ -35,7 +50,7 @@ export class OrderController {
     }
   };
 
-  updateStatus = async (req: any, res: any) => {
+  updateStatus = async (req: ControllerRequest, res: ControllerResponse) => {
     try {
       const { id } = req.params;
       const { status } = req.body;
@@ -61,7 +76,7 @@ export class OrderController {
     }
   };
 
-  deleteOrder = async (req: any, res: any) => {
+  deleteOrder = async (req: ControllerRequest, res: ControllerResponse) => {
     try {
       const { id } = req.params;
       const success = await this.orderService.cancelOrder(id as string);
