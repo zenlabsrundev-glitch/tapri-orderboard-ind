@@ -4,7 +4,7 @@ import { OrderService } from '../services/OrderService';
 export class OrderController {
   constructor(private orderService: OrderService) {}
 
-  getAllOrders = async (req: Request, res: Response) => {
+  getAllOrders = async (req: any, res: any) => {
     try {
       const orders = await this.orderService.listOrders();
       res.json(orders);
@@ -13,7 +13,7 @@ export class OrderController {
     }
   };
 
-  createOrder = async (req: Request, res: Response) => {
+  createOrder = async (req: any, res: any) => {
     try {
       const order = await this.orderService.placeOrder(req.body);
       
@@ -35,7 +35,7 @@ export class OrderController {
     }
   };
 
-  updateStatus = async (req: Request, res: Response) => {
+  updateStatus = async (req: any, res: any) => {
     try {
       const { id } = req.params;
       const { status } = req.body;
@@ -61,7 +61,7 @@ export class OrderController {
     }
   };
 
-  deleteOrder = async (req: Request, res: Response) => {
+  deleteOrder = async (req: any, res: any) => {
     try {
       const { id } = req.params;
       const success = await this.orderService.cancelOrder(id as string);

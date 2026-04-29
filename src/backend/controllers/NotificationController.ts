@@ -4,7 +4,7 @@ import { NotificationService } from '../services/NotificationService';
 export class NotificationController {
   constructor(private notificationService: NotificationService) {}
 
-  getNotifications = async (req: Request, res: Response) => {
+  getNotifications = async (req: any, res: any) => {
     try {
       const notifications = await this.notificationService.listNotifications();
       res.json(notifications);
@@ -13,7 +13,7 @@ export class NotificationController {
     }
   };
 
-  markAsRead = async (req: Request, res: Response) => {
+  markAsRead = async (req: any, res: any) => {
     try {
       const id = req.params.id?.trim();
       console.log(`[notifications]: Attempting to mark as read. ID: "${id}"`);
@@ -29,7 +29,7 @@ export class NotificationController {
     }
   };
 
-  markAllAsRead = async (req: Request, res: Response) => {
+  markAllAsRead = async (req: any, res: any) => {
     try {
       await this.notificationService.markAllRead();
       res.status(200).json({ success: true });
@@ -38,7 +38,7 @@ export class NotificationController {
     }
   };
 
-  deleteNotification = async (req: Request, res: Response) => {
+  deleteNotification = async (req: any, res: any) => {
     try {
       const id = req.params.id?.trim();
       const success = await this.notificationService.deleteNotification(id);
@@ -52,7 +52,7 @@ export class NotificationController {
     }
   };
 
-  deleteAll = async (req: Request, res: Response) => {
+  deleteAll = async (req: any, res: any) => {
     try {
       await this.notificationService.clearAllNotifications();
       res.status(200).json({ success: true });
