@@ -50,7 +50,7 @@ app.get('/api/health', (req, res) => {
 
 const startServer = async () => {
   try {
-    const { migrate } = await import('./db');
+    const { migrate } = await import('./db.js');
     await migrate();
     app.listen(port, () => {
       console.log(`[server]: Tapri Backend is running on port ${port} ☕`);
