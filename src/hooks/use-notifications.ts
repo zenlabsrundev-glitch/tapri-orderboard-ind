@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
+import { getApiBase } from '@/lib/api-utils';
 
 export type NotificationType = 'new_order' | 'status_update' | 'delayed' | 'pickup_reminder';
 
@@ -12,7 +13,7 @@ export interface Notification {
   createdAt: number;
 }
 
-const API_BASE = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/notifications` : '/api/notifications';
+const API_BASE = getApiBase('notifications');
 
 export const useNotifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);

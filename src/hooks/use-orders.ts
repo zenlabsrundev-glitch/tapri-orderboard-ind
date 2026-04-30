@@ -1,10 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
+import { getApiBase } from '@/lib/api-utils';
 import type { Order, OrderStatus } from '@/lib/tapri-data';
 import { toast } from 'sonner';
 
-const API_BASE = process.env.REACT_APP_API_URL
-  ? `${process.env.REACT_APP_API_URL}/orders`
-  : '/api/orders';
+const API_BASE = getApiBase('orders');
 
 export const useOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -52,7 +51,7 @@ export const useOrders = () => {
         console.error('[useOrders] Failed to place order:', err);
         toast.error('Failed to place order. Try again.');
       }
-      // UI update is handled by the socket 'newOrder' event
+      // UI update is handled by polling in this version
     } catch (error) {
       console.error('[useOrders] Network error placing order:', error);
       toast.error('Network error. Order not placed.');

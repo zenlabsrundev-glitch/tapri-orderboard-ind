@@ -16,7 +16,12 @@ export const pool = new Pool({
   }
 });
 
+let migrationsRun = false;
+
+
 export const migrate = async () => {
+  if (migrationsRun) return;
+
   const client = await pool.connect();
   try {
     console.log('[db]: Starting auto-migrations...');
@@ -82,7 +87,9 @@ export const migrate = async () => {
       );
     `);
 
+    migrationsRun = true;
     console.log('[db]: Auto-migrations completed successfully.');
+
   } catch (err) {
     console.error('[db]: Migration error:', err);
     throw err;
@@ -90,3 +97,16 @@ export const migrate = async () => {
     client.release();
   }
 };
+
+export const ensureConnected = async () => {
+  try {
+    await migrate();
+    // Simple query to test connection
+    await pool.query('SELECT 1');
+    return true;
+  } catch (err) {
+    console.error('[db]: Connection test failed:', err);
+    return false;
+  }
+};
+

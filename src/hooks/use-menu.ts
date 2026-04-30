@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { getApiBase } from '@/lib/api-utils';
 import type { MenuItem } from '@/lib/menu-api-contract';
 
-const API_URL = process.env.REACT_APP_API_URL || '/api';
+const API_URL = getApiBase('menu');
 
 export function useMenu() {
   const [menu, setMenu] = useState<MenuItem[]>([]);
@@ -14,7 +15,7 @@ export function useMenu() {
       setLoading(true);
       setError(null);
       try {
-        const res = await axios.get<MenuItem[]>(`${API_URL}/menu`);
+        const res = await axios.get<MenuItem[]>(API_URL);
         setMenu(res.data);
       } catch (err) {
         console.error('[useMenu]: Failed to fetch menu', err);

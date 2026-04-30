@@ -5,9 +5,10 @@ import { TeaCupLogo } from '@/components/tapri/TeaCupLogo';
 import { TeaLoading } from '@/components/tapri/TeaLoading';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { getApiBase } from '@/lib/api-utils';
 import type { MenuCardItem, MenuCardTag, MenuCategory } from '@/lib/menu-api-contract';
 
-const API_URL = process.env.REACT_APP_API_URL || '/api';
+const API_URL = getApiBase('menu/card');
 
 type DraftState = Record<string, { name: string; description: string; price: string }>;
 
@@ -36,7 +37,7 @@ export default function MenuCard() {
 
   const fetchMenu = async () => {
     try {
-      const res = await axios.get<MenuCategory[]>(`${API_URL}/menu/card`);
+      const res = await axios.get<MenuCategory[]>(API_URL);
       setMenu(res.data);
     } catch (error) {
       console.error('[MenuCard]: Failed to load menu card', error);
@@ -116,7 +117,7 @@ export default function MenuCard() {
 
     setSavingKey(`add-${categoryId}`);
     try {
-      await axios.post<MenuCardItem>(`${API_URL}/menu/card/items`, {
+      await axios.post<MenuCardItem>(`${API_URL}/items`, {
         name,
         description,
         price,
@@ -151,7 +152,7 @@ export default function MenuCard() {
 
     setSavingKey(`edit-${item.id}`);
     try {
-      await axios.patch<MenuCardItem>(`${API_URL}/menu/card/items/${item.id}`, {
+      await axios.patch<MenuCardItem>(`${API_URL}/items/${item.id}`, {
         name,
         description,
         price,
@@ -170,7 +171,7 @@ export default function MenuCard() {
   const handleDelete = async (itemId: string) => {
     setSavingKey(`delete-${itemId}`);
     try {
-      await axios.delete(`${API_URL}/menu/card/items/${itemId}`);
+      await axios.delete(`${API_URL}/items/${itemId}`);
       await fetchMenu();
       cancelEditing(itemId);
       toast.success('Menu items removed');

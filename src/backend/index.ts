@@ -5,7 +5,7 @@ import { createNotificationRouter } from './routes/notificationRoutes';
 import { createMenuRouter } from './routes/menuRoutes';
 import { SupabaseMenuRepository } from './repositories/SupabaseMenuRepository';
 import { SupabaseSuggestionRepository } from './repositories/SupabaseSuggestionRepository';
-import { pool, migrate } from './db';
+import { pool, migrate, ensureConnected } from './db';
 
 const app = express();
 
@@ -13,6 +13,16 @@ const port = process.env.BACKEND_PORT || process.env.PORT || 8080;
 
 app.use(cors());
 app.use(express.json());
+
+// Database connection & migration middleware (for Vercel)
+app.use(async (req, res, next) => {
+  const isReady = await ensureConnected();
+  if (!isReady) {
+    console.error('[db]: Service unavailable due to DB connection failure');
+    return res.status(503).json({ error: 'Database initializing or unavailable' });
+  }
+  next();
+});
 
 // Normalize URLs
 app.use((req, res, next) => {

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { getApiBase } from '@/lib/api-utils';
 import type { Suggestion } from '@/lib/menu-api-contract';
 
-const API_URL = process.env.REACT_APP_API_URL || '/api';
+const API_URL = getApiBase('menu/suggestions');
 
 export function useSuggestions() {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -14,7 +15,7 @@ export function useSuggestions() {
       setLoading(true);
       setError(null);
       try {
-        const res = await axios.get<Suggestion[]>(`${API_URL}/menu/suggestions`);
+        const res = await axios.get<Suggestion[]>(API_URL);
         setSuggestions(res.data);
       } catch (err) {
         console.error('[useSuggestions]: Failed to fetch suggestions', err);
