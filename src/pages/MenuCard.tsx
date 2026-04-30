@@ -173,7 +173,7 @@ export default function MenuCard() {
       await axios.delete(`${API_URL}/menu/card/items/${itemId}`);
       await fetchMenu();
       cancelEditing(itemId);
-      toast.success('Menu item removed');
+      toast.success('Menu items removed');
     } catch (error) {
       console.error('[MenuCard]: Failed to delete menu item', error);
       toast.error('Failed to delete item');
