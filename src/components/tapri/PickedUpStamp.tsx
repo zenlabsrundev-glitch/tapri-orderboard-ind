@@ -21,7 +21,7 @@ export const PickedUpStamp = () => {
             PICKED UP
           </div>
           <div className="font-handwritten text-neon/90 text-base leading-none mt-0.5 text-center">
-            ✓ served fresh
+            ✓ Served Fresh
           </div>
         </div>
       </div>
