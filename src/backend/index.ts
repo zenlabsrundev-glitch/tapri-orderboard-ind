@@ -5,7 +5,7 @@ import { createNotificationRouter } from './routes/notificationRoutes';
 import { createMenuRouter } from './routes/menuRoutes';
 import { SupabaseMenuRepository } from './repositories/SupabaseMenuRepository';
 import { SupabaseSuggestionRepository } from './repositories/SupabaseSuggestionRepository';
-import { pool } from './db';
+import { pool, migrate } from './db';
 
 const app = express();
 
@@ -39,7 +39,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/notifications', notificationRouter);
 app.use('/api/menu', menuRouter);
 
-// Basic Health check (No DB hit to ensure boot succeeds)
+// Basic Health check
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok', 
@@ -50,7 +50,6 @@ app.get('/api/health', (req, res) => {
 
 const startServer = async () => {
   try {
-    const { migrate } = await import('./db.js');
     await migrate();
     app.listen(port, () => {
       console.log(`[server]: Tapri Backend is running on port ${port} ☕`);
