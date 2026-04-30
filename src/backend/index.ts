@@ -82,7 +82,7 @@ app.get('/api/admin/migrate', async (req, res) => {
 // --- Error Handling ---
 
 // Global Error Handler
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: any, req: any, res: any, next: any) => {
   console.error('[server]: Unhandled Exception:', err);
   res.status(500).json({ 
     error: 'Internal Server Error', 
