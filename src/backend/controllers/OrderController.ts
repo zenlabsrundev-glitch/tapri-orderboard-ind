@@ -22,8 +22,8 @@ export class OrderController {
     try {
       const orders = await this.orderService.listOrders();
       res.json(orders);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch orders' });
+    } catch (error: any) {
+      res.status(500).json({ error: 'Failed to fetch orders', details: error.message });
     }
   };
 
@@ -40,9 +40,9 @@ export class OrderController {
       );
 
       res.status(201).json(order);
-    } catch (error) {
+    } catch (error: any) {
       console.error('[OrderController] createOrder error:', error);
-      res.status(500).json({ error: 'Failed to create order' });
+      res.status(500).json({ error: 'Failed to create order', details: error.message });
     }
   };
 
@@ -64,8 +64,8 @@ export class OrderController {
       } else {
         res.status(404).json({ error: 'Order not found' });
       }
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to update order status' });
+    } catch (error: any) {
+      res.status(500).json({ error: 'Failed to update order status', details: error.message });
     }
   };
 
@@ -78,8 +78,8 @@ export class OrderController {
       } else {
         res.status(404).json({ error: 'Order not found' });
       }
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to delete order' });
+    } catch (error: any) {
+      res.status(500).json({ error: 'Failed to delete order', details: error.message });
     }
   };
 }

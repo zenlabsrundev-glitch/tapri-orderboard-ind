@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+console.log(`[db]: Initializing connection to ${process.env.SUPABASE_HOST} as user ${process.env.SUPABASE_USER}`);
+
 export const pool = new Pool({
   host: process.env.SUPABASE_HOST,
   port: parseInt(process.env.SUPABASE_PORT || '5432'),

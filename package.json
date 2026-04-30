@@ -2,6 +2,9 @@
   "name": "tapri-orderboard-ind",
   "private": true,
   "version": "1.0.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "pnpm run dev:all",
     "dev:server": "pnpm run server",

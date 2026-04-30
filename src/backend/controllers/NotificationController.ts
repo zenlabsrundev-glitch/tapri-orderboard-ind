@@ -18,8 +18,8 @@ export class NotificationController {
     try {
       const notifications = await this.notificationService.listNotifications();
       res.json(notifications);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch notifications' });
+    } catch (error: any) {
+      res.status(500).json({ error: 'Failed to fetch notifications', details: error.message });
     }
   };
 
@@ -37,8 +37,8 @@ export class NotificationController {
       } else {
         res.status(404).json({ error: 'Notification not found' });
       }
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to mark notification as read' });
+    } catch (error: any) {
+      res.status(500).json({ error: 'Failed to mark notification as read', details: error.message });
     }
   };
 
@@ -46,8 +46,8 @@ export class NotificationController {
     try {
       await this.notificationService.markAllRead();
       res.status(200).json({ success: true });
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to mark all notifications as read' });
+    } catch (error: any) {
+      res.status(500).json({ error: 'Failed to mark all notifications as read', details: error.message });
     }
   };
 
@@ -63,8 +63,8 @@ export class NotificationController {
       } else {
         res.status(404).json({ error: 'Notification not found' });
       }
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to delete notification' });
+    } catch (error: any) {
+      res.status(500).json({ error: 'Failed to delete notification', details: error.message });
     }
   };
 
@@ -72,8 +72,8 @@ export class NotificationController {
     try {
       await this.notificationService.clearAllNotifications();
       res.status(200).json({ success: true });
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to delete all notifications' });
+    } catch (error: any) {
+      res.status(500).json({ error: 'Failed to delete all notifications', details: error.message });
     }
   };
 }

@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import orderRoutes from './routes/orderRoutes';
 import { createNotificationRouter } from './routes/notificationRoutes';
 import { createMenuRouter } from './routes/menuRoutes';
@@ -8,26 +7,23 @@ import { SupabaseMenuRepository } from './repositories/SupabaseMenuRepository';
 import { SupabaseSuggestionRepository } from './repositories/SupabaseSuggestionRepository';
 import { pool } from './db';
 
-dotenv.config();
-
 const app = express();
-export { app };
 
 const port = process.env.BACKEND_PORT || process.env.PORT || 8080;
 
 app.use(cors());
 app.use(express.json());
-// Normalize URLs (e.g. //api -> /api)
+
+// Normalize URLs
 app.use((req, res, next) => {
   req.url = req.url.replace(/\/+/g, '/');
   next();
 });
 
-
-// Initialize Notification System first so it can be used by other services
+// Initialize Notification System
 const { router: notificationRouter, notificationService } = createNotificationRouter();
 
-// Attach notificationService to request
+// Attach services to request
 app.use((req, res, next) => {
   (req as any).notificationService = notificationService;
   next();
@@ -43,15 +39,18 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/notifications', notificationRouter);
 app.use('/api/menu', menuRouter);
 
-// Health check
+// Basic Health check (No DB hit to ensure boot succeeds)
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    node: process.version
+  });
 });
-
-import { migrate } from './db';
 
 const startServer = async () => {
   try {
+    const { migrate } = await import('./db');
     await migrate();
     app.listen(port, () => {
       console.log(`[server]: Tapri Backend is running on port ${port} ☕`);
@@ -62,10 +61,9 @@ const startServer = async () => {
   }
 };
 
-// In serverless environments (e.g. Vercel), this file is imported by a function
-// and must NOT call listen(). Start only when run directly in local/dev server mode.
 if (require.main === module) {
   startServer();
 }
 
+export { app };
 export default app;
