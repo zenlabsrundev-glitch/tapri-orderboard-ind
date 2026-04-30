@@ -13,15 +13,17 @@ export const pool = new Pool({
   password: process.env.SUPABASE_PASSWORD,
   ssl: {
     rejectUnauthorized: false
-  }
+  },
+  // Optimize for serverless: short timeouts
+  connectionTimeoutMillis: 5000, 
+  idleTimeoutMillis: 10000
 });
 
 let migrationsRun = false;
 
-
 export const migrate = async () => {
   if (migrationsRun) return;
-
+  
   const client = await pool.connect();
   try {
     console.log('[db]: Starting auto-migrations...');
@@ -89,7 +91,7 @@ export const migrate = async () => {
 
     migrationsRun = true;
     console.log('[db]: Auto-migrations completed successfully.');
-
+    return true;
   } catch (err) {
     console.error('[db]: Migration error:', err);
     throw err;
@@ -98,9 +100,12 @@ export const migrate = async () => {
   }
 };
 
+/**
+ * Fast connection check for serverless environments.
+ * We skip migrations here to avoid Vercel timeouts (10s).
+ */
 export const ensureConnected = async () => {
   try {
-    await migrate();
     // Simple query to test connection
     await pool.query('SELECT 1');
     return true;
@@ -109,4 +114,3 @@ export const ensureConnected = async () => {
     return false;
   }
 };
-

@@ -14,12 +14,20 @@ const port = process.env.BACKEND_PORT || process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json());
 
-// Database connection & migration middleware (for Vercel)
+// Fast database connection check (middleware)
 app.use(async (req, res, next) => {
+  // Skip check for health and migrate endpoints to avoid recursion/delays
+  if (req.path === '/api/health' || req.path === '/api/admin/migrate') {
+    return next();
+  }
+
   const isReady = await ensureConnected();
   if (!isReady) {
     console.error('[db]: Service unavailable due to DB connection failure');
-    return res.status(503).json({ error: 'Database initializing or unavailable' });
+    return res.status(503).json({ 
+      error: 'Database connection failed', 
+      details: 'Check Vercel environment variables and Supabase status.' 
+    });
   }
   next();
 });
@@ -44,7 +52,8 @@ const menuRepo = new SupabaseMenuRepository(pool);
 const suggestionRepo = new SupabaseSuggestionRepository(pool);
 const menuRouter = createMenuRouter(menuRepo, suggestionRepo);
 
-// API Routes
+// --- API Routes ---
+
 app.use('/api/orders', orderRoutes);
 app.use('/api/notifications', notificationRouter);
 app.use('/api/menu', menuRouter);
@@ -55,6 +64,30 @@ app.get('/api/health', (req, res) => {
     status: 'ok', 
     timestamp: new Date().toISOString(),
     node: process.version
+  });
+});
+
+// Manual Migration Endpoint (Call this once after deployment)
+app.get('/api/admin/migrate', async (req, res) => {
+  try {
+    console.log('[admin]: Manual migration triggered');
+    await migrate();
+    res.json({ success: true, message: 'Database migrations completed successfully.' });
+  } catch (err: any) {
+    console.error('[admin]: Migration failed:', err);
+    res.status(500).json({ error: 'Migration failed', details: err.message });
+  }
+});
+
+// --- Error Handling ---
+
+// Global Error Handler
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('[server]: Unhandled Exception:', err);
+  res.status(500).json({ 
+    error: 'Internal Server Error', 
+    message: err.message,
+    stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack 
   });
 });
 
