@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
 import type { Order, OrderStatus } from '@/lib/tapri-data';
-import { useSocket } from './use-socket';
 import { toast } from 'sonner';
 
 const API_BASE = process.env.REACT_APP_API_URL
@@ -9,20 +8,21 @@ const API_BASE = process.env.REACT_APP_API_URL
 
 export const useOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
-  const { socket } = useSocket();
 
   // Fetch initial orders from backend
-  const fetchOrders = useCallback(async () => {
+  const fetchOrders = useCallback(async (isSilent = false) => {
     try {
       const res = await fetch(API_BASE);
       if (res.ok) {
         const data = await res.json();
         setOrders(data);
-      } else {
+      } else if (!isSilent) {
         console.error('[useOrders] Failed to fetch orders:', res.status);
       }
     } catch (error) {
-      console.error('[useOrders] Network error fetching orders:', error);
+      if (!isSilent) {
+        console.error('[useOrders] Network error fetching orders:', error);
+      }
     }
   }, []);
 
@@ -30,37 +30,14 @@ export const useOrders = () => {
     fetchOrders();
   }, [fetchOrders]);
 
-  // Real-time updates via Socket.io
+  // Polling for updates (replaces Socket.io)
   useEffect(() => {
-    if (!socket) return;
+    const interval = setInterval(() => {
+      fetchOrders(true); // silent fetch to avoid console noise during polling
+    }, 5000); // 5 seconds polling
 
-    // Server creates order → everyone gets it
-    socket.on('newOrder', (newOrder: Order) => {
-      setOrders(prev => {
-        if (prev.find(o => o.id === newOrder.id)) return prev;
-        toast.success(`New order from ${newOrder.groupName}! ☕`);
-        return [newOrder, ...prev];
-      });
-    });
-
-    // Server updates status → sync all clients
-    socket.on('orderStatusUpdated', (updatedOrder: Order) => {
-      setOrders(prev =>
-        prev.map(o => (o.id === updatedOrder.id ? updatedOrder : o))
-      );
-    });
-
-    // Server deletes order → remove from all clients
-    socket.on('orderDeleted', (id: string) => {
-      setOrders(prev => prev.filter(o => o.id !== id));
-    });
-
-    return () => {
-      socket.off('newOrder');
-      socket.off('orderStatusUpdated');
-      socket.off('orderDeleted');
-    };
-  }, [socket]);
+    return () => clearInterval(interval);
+  }, [fetchOrders]);
 
   // POST /api/orders — backend generates the final ID
   const addOrder = useCallback(async (o: Omit<Order, 'id'> & { id?: string }) => {

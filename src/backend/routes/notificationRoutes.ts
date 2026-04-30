@@ -4,10 +4,10 @@ import { NotificationService } from '../services/NotificationService';
 import { SupabaseNotificationRepository } from '../repositories/SupabaseNotificationRepository';
 
 // Factory function to initialize routes and return the router + service
-export const createNotificationRouter = (io: any) => {
+export const createNotificationRouter = () => {
   const router = Router();
   const notificationRepo = new SupabaseNotificationRepository();
-  const notificationService = new NotificationService(notificationRepo, io);
+  const notificationService = new NotificationService(notificationRepo);
   const notificationController = new NotificationController(notificationService);
 
   // We expose the service so OrderController can use it

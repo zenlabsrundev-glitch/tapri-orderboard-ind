@@ -1,8 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
 import orderRoutes from './routes/orderRoutes';
 import { createNotificationRouter } from './routes/notificationRoutes';
 import { createMenuRouter } from './routes/menuRoutes';
@@ -14,14 +12,6 @@ dotenv.config();
 
 const app = express();
 export { app };
-const httpServer = createServer(app);
-const ioOpts: any = {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-  }
-};
-const io: any = new Server(httpServer as any, ioOpts);
 
 const port = process.env.BACKEND_PORT || process.env.PORT || 8080;
 
@@ -35,11 +25,10 @@ app.use((req, res, next) => {
 
 
 // Initialize Notification System first so it can be used by other services
-const { router: notificationRouter, notificationService } = createNotificationRouter(io);
+const { router: notificationRouter, notificationService } = createNotificationRouter();
 
-// Attach io and notificationService to request
+// Attach notificationService to request
 app.use((req, res, next) => {
-  (req as any).io = io;
   (req as any).notificationService = notificationService;
   next();
 });
@@ -59,20 +48,12 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Socket connection
-io.on('connection', (socket: { id: any; on: (arg0: string, arg1: () => void) => void; }) => {
-  console.log('[socket]: Client connected:', socket.id);
-  socket.on('disconnect', () => {
-    console.log('[socket]: Client disconnected');
-  });
-});
-
 import { migrate } from './db';
 
 const startServer = async () => {
   try {
     await migrate();
-    httpServer.listen(port, () => {
+    app.listen(port, () => {
       console.log(`[server]: Tapri Backend is running on port ${port} ☕`);
     });
   } catch (err) {

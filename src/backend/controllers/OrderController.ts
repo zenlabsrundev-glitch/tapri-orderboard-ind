@@ -3,7 +3,6 @@ import { OrderService } from '../services/OrderService';
 type ControllerRequest = {
   params: Record<string, string | undefined>;
   body?: any;
-  io?: { emit: (event: string, payload: any) => void };
   notificationService?: {
     createNotification: (type: string, title: string, message: string, orderId?: string) => Promise<any>;
   };
@@ -32,10 +31,7 @@ export class OrderController {
     try {
       const order = await this.orderService.placeOrder(req.body);
       
-      // 1. Live socket broadcast
-      (req as any).io.emit('newOrder', order);
-      
-      // 2. Create persistent notification
+      // 1. Create persistent notification
       await (req as any).notificationService.createNotification(
         'new_order',
         'New Order Received! ☕',
@@ -56,10 +52,7 @@ export class OrderController {
       const { status } = req.body;
       const order = await this.orderService.updateOrderStatus(id as string, status);
       if (order) {
-        // 1. Live socket broadcast
-        (req as any).io.emit('orderStatusUpdated', order);
-
-        // 2. Create persistent notification
+        // 1. Create persistent notification
         await (req as any).notificationService.createNotification(
           'status_update',
           'Order Status Updated',
@@ -81,7 +74,6 @@ export class OrderController {
       const { id } = req.params;
       const success = await this.orderService.cancelOrder(id as string);
       if (success) {
-        (req as any).io.emit('orderDeleted', id); // Notify about deletion
         res.status(204).send();
       } else {
         res.status(404).json({ error: 'Order not found' });

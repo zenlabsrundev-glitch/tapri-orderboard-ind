@@ -3,8 +3,7 @@ import { INotificationRepository } from '../repositories/NotificationRepository'
 
 export class NotificationService {
   constructor(
-    private notificationRepo: INotificationRepository,
-    private io: any
+    private notificationRepo: INotificationRepository
   ) {}
 
   async createNotification(type: NotificationType, title: string, message: string, orderId?: string): Promise<Notification> {
@@ -20,11 +19,6 @@ export class NotificationService {
 
     const saved = await this.notificationRepo.create(notification);
     
-    // Broadcast via socket
-    if (this.io) {
-      this.io.emit('notification', saved);
-    }
-
     return saved;
   }
 

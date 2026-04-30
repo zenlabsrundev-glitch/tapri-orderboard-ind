@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { useSocket } from './use-socket';
 
 export type NotificationType = 'new_order' | 'status_update' | 'delayed' | 'pickup_reminder';
 
@@ -17,11 +16,10 @@ const API_BASE = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_UR
 
 export const useNotifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const { socket } = useSocket();
 
   const unreadCount = useMemo(() => notifications.filter(n => !n.isRead).length, [notifications]);
 
-  const fetchNotifications = useCallback(async () => {
+  const fetchNotifications = useCallback(async (isSilent = false) => {
     try {
       const res = await fetch(API_BASE);
       if (res.ok) {
@@ -29,7 +27,9 @@ export const useNotifications = () => {
         setNotifications(data);
       }
     } catch (error) {
-      console.error('Failed to fetch notifications:', error);
+      if (!isSilent) {
+        console.error('Failed to fetch notifications:', error);
+      }
     }
   }, []);
 
@@ -37,17 +37,14 @@ export const useNotifications = () => {
     fetchNotifications();
   }, [fetchNotifications]);
 
+  // Polling for updates (replaces Socket.io)
   useEffect(() => {
-    if (!socket) return;
+    const interval = setInterval(() => {
+      fetchNotifications(true);
+    }, 5000); // 5 seconds polling
 
-    socket.on('notification', (newNotif: Notification) => {
-      setNotifications(prev => [newNotif, ...prev]);
-    });
-
-    return () => {
-      socket.off('notification');
-    };
-  }, [socket]);
+    return () => clearInterval(interval);
+  }, [fetchNotifications]);
 
   const markAsRead = useCallback(async (id: string) => {
     try {
