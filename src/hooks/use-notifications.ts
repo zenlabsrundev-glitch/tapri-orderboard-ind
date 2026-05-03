@@ -38,7 +38,7 @@ export const useNotifications = () => {
     fetchNotifications();
   }, [fetchNotifications]);
 
-  // Polling for updates (replaces Socket.io)
+  // Polling for updates
   useEffect(() => {
     const interval = setInterval(() => {
       fetchNotifications(true);

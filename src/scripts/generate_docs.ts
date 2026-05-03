@@ -68,14 +68,14 @@ const workflowContent = [
     'State Management: React Hooks (useState, useEffect, useCallback) and custom hooks (useOrders, useNotifications).',
     'Styling: Tailwind CSS with a custom "Tapri" theme (Saffron/Chai colors).',
     'Components: Modular architecture using Radix UI primitives and Lucide icons.',
-    'Real-time: socket.io-client for immediate synchronization with the backend.'
+    'Real-time: Polling for periodic synchronization with the backend.'
   ]},
 
   { type: 'h1', text: '3. Backend (Node.js/Express)' },
   { type: 'list', items: [
     'Layered Architecture: Controllers handle requests, Services manage business logic, and Repositories interact with the database.',
     'Persistence: Supabase (PostgreSQL) for storing orders and notification history.',
-    'Communication: Socket.io for bidirectional, real-time events.',
+    'Communication: REST API with standard HTTP methods and polling for updates.',
     'Dependency Injection: Clean instantiation of services and repositories.'
   ]},
 
@@ -84,19 +84,12 @@ const workflowContent = [
   { type: 'list', items: [
     '1. Frontend validates inputs and POSTs to /api/orders.',
     '2. Backend (OrderService) generates a unique ID and saves the order to Supabase.',
-    '3. Backend emits a "newOrder" event via Socket.io to all connected clients.',
-    '4. Backend (NotificationService) creates a persistent notification for the vendor.',
-    '5. Frontend receives the socket event and updates the Live Queue optimistically.'
+    '3. Backend (NotificationService) creates a persistent notification for the vendor.',
+    '4. Frontend relies on polling to fetch the updated data for the Live Queue.'
   ]},
 
   { type: 'h1', text: '5. Real-time Synchronization' },
-  { type: 'p', text: 'The system uses specific Socket.io events to keep all instances in sync:' },
-  { type: 'list', items: [
-    'newOrder: Broadcast when a new order is successfully created.',
-    'orderStatusUpdated: Broadcast when an order moves between Pending, Preparing, or Ready.',
-    'orderDeleted: Broadcast when an order is cancelled or completed.',
-    'notification: Broadcast when a system-wide alert is triggered.'
-  ]}
+  { type: 'p', text: 'The system uses interval polling to keep all instances in sync. Connected clients periodically fetch data via REST APIs for orders and notifications.' }
 ];
 
 async function main() {

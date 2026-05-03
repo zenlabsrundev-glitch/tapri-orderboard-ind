@@ -29,7 +29,7 @@ export const useOrders = () => {
     fetchOrders();
   }, [fetchOrders]);
 
-  // Polling for updates (replaces Socket.io)
+  // Polling for updates
   useEffect(() => {
     const interval = setInterval(() => {
       fetchOrders(true); // silent fetch to avoid console noise during polling

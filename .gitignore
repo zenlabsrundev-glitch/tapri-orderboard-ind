@@ -32,3 +32,12 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Vercel
+.vercel
+.vercel/
+
+# Firebase
+.firebase/
+firebase-debug.log*
+firebase-debug.*.log*
