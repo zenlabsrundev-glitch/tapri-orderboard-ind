@@ -170,11 +170,10 @@ export const OrderPanel = ({ onPlace, onPopper, onCelebrate }: OrderPanelProps) 
             key={c.id}
             type="button"
             onClick={() => setActiveCat(c.id)}
-            className={`flex-1 py-2 px-1 rounded-lg text-xs font-semibold transition ${
-              activeCat === c.id
+            className={`flex-1 py-2 px-1 rounded-lg text-xs font-semibold transition ${activeCat === c.id
                 ? 'bg-gradient-chai text-cream shadow-card'
                 : 'text-chai-deep/70 hover:bg-cream dark:hover:bg-zinc-900/70'
-            }`}
+              }`}
           >
             <div className="text-base">{c.emoji}</div>
             {c.label}
@@ -199,9 +198,8 @@ export const OrderPanel = ({ onPlace, onPopper, onCelebrate }: OrderPanelProps) 
             return (
               <div
                 key={item.id}
-                className={`rounded-xl border p-3 flex items-center gap-3 transition dark:bg-zinc-900/70 dark:border-amber-200/15 dark:hover:border-amber-200/30 ${
-                  qty > 0 ? 'bg-saffron/10 border-saffron/40 dark:bg-amber-400/10' : 'bg-cream border-border hover:border-chai/30'
-                }`}
+                className={`rounded-xl border p-3 flex items-center gap-3 transition dark:bg-zinc-900/70 dark:border-amber-200/15 dark:hover:border-amber-200/30 ${qty > 0 ? 'bg-saffron/10 border-saffron/40 dark:bg-amber-400/10' : 'bg-cream border-border hover:border-chai/30'
+                  }`}
               >
                 <div className="text-2xl">{item.emoji}</div>
                 <div className="flex-1 min-w-0">
@@ -297,11 +295,10 @@ export const OrderPanel = ({ onPlace, onPopper, onCelebrate }: OrderPanelProps) 
                 type="button"
                 onClick={() => setPickupMins(m)}
                 disabled={menuBlocked}
-                className={`flex-1 py-1.5 rounded-md text-xs font-semibold border transition ${
-                  pickupMins === m
+                className={`flex-1 py-1.5 rounded-md text-xs font-semibold border transition ${pickupMins === m
                     ? 'bg-chai text-cream border-chai dark:bg-amber-500 dark:text-zinc-950 dark:border-amber-300/50'
                     : 'bg-cream text-chai border-chai/20 hover:border-chai/50 dark:bg-zinc-900/70 dark:text-amber-50 dark:border-amber-200/20 dark:hover:border-amber-200/40'
-                }`}
+                  }`}
               >
                 {m}m
               </button>
